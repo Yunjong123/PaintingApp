@@ -1,5 +1,7 @@
 import { Application, Assets, Sprite, Rectangle  } from "pixi.js";
 import ToolsManager from "./managers/ToolsManager.js";
+import RectangleState from "./states/RectangleState.js";
+import EllipseState from "./states/EllipseState.js";
 
 import "../style.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -18,11 +20,11 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
     ToolsManager.addToolGroup("Shapes",["fa-solid","fa-shapes"], [
         ToolsManager.getTool("Ellipse",["fa-regular","fa-circle"], () => {
-            
+            currentState = new EllipseState(app, getStyle);
             
         }),
         ToolsManager.getTool("Rectangle",["fa-regular","fa-square"], () => {
-            
+            currentState = new RectangleState(app, getStyle);
             
         }),
         ToolsManager.getTool("Line",["fa-solid","fa-lines-leaning"], () => {
@@ -67,6 +69,21 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
     }));
     
     container.appendChild(app.canvas);
+    let currentState = null;
+
+    const getStyle = () => ({
+        fill: fillColorPicker.getDecimal(),
+        stroke: strokeColorPicker.getDecimal(),
+        strokeWidth: Number(strokeInput.value),
+    });
+
+    app.stage.eventMode = "static";
+    app.stage.hitArea = app.screen;
+
+    app.stage.on("pointerdown", (e) => currentState?.onPointerDown(e.global));
+    app.stage.on("pointermove", (e) => currentState?.onPointerMove(e.global));
+    app.stage.on("pointerup", (e) => currentState?.onPointerUp(e.global));
+    app.stage.on("pointerupoutside", (e) => currentState?.onPointerUp(e.global));
 
     let undoBtn = document.getElementById("undo");
     let redoBtn = document.getElementById("redo");
