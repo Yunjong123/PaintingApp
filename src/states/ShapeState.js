@@ -2,8 +2,9 @@ import { Graphics } from "pixi.js";
 import ToolState from "./ToolState.js";
 
 export default class ShapeState extends ToolState {
-    constructor(app, getStyle) {
-        super(app);
+    constructor(layer, getStyle) {
+        super();
+        this.layer = layer;
         this.getStyle = getStyle;
         this.start = null;
         this.graphics = null;
@@ -12,7 +13,7 @@ export default class ShapeState extends ToolState {
     onPointerDown(pos) {
         this.start = { x: pos.x, y: pos.y };
         this.graphics = new Graphics();
-        this.app.stage.addChild(this.graphics);
+        this.layer.addChild(this.graphics);
     }
 
     onPointerMove(pos) {
