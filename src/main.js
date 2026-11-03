@@ -6,6 +6,8 @@ import EllipseState from "./states/EllipseState.js";
 import LineState from "./states/LineState.js";
 import StarState from "./states/StarState.js";
 import SelectState from "./states/SelectState.js";
+import ToolState from "./states/ToolState.js";
+import MoveState from "./states/MoveState.js";
 
 import "../style.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -47,7 +49,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
     }));
 
     ToolsManager.addTool(ToolsManager.getTool("Move Tool",["fa-solid","fa-up-down-left-right"], () => {
-
+        currentState = new MoveState();
     }));
 
     ToolsManager.addTool(ToolsManager.getTool("Scale Tool",["fa-solid","fa-up-right-and-down-left-from-center"], () => {
@@ -55,7 +57,10 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
     }));
 
     ToolsManager.addTool(ToolsManager.getTool("Delete Tool",["fa-solid","fa-trash-can"], () => {
-
+        for (const shape of SelectionManager.getSelected()) {
+            shape.removeFromParent();
+        }
+        SelectionManager.clear();
     }));
 
     ToolsManager.addTool(ToolsManager.getTool("Group Tool",["fa-solid","fa-object-group"], () => {
@@ -74,7 +79,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
     SelectionManager.init(overlayLayer);
 
 
-    let currentState = null;
+    let currentState = new ToolState();
 
     const getStyle = () => ({
         fill: fillColorPicker.getDecimal(),
@@ -85,10 +90,10 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
     app.stage.eventMode = "static";
     app.stage.hitArea = app.screen;
 
-    app.stage.on("pointerdown", (e) => currentState?.onPointerDown(e.global));
-    app.stage.on("pointermove", (e) => currentState?.onPointerMove(e.global));
-    app.stage.on("pointerup", (e) => currentState?.onPointerUp(e.global));
-    app.stage.on("pointerupoutside", (e) => currentState?.onPointerUp(e.global));
+    app.stage.on("pointerdown", (e) => currentState.onPointerDown(e.global));
+    app.stage.on("pointermove", (e) => currentState.onPointerMove(e.global));
+    app.stage.on("pointerup", (e) => currentState.onPointerUp(e.global));
+    app.stage.on("pointerupoutside", (e) => currentState.onPointerUp(e.global));
 
     let undoBtn = document.getElementById("undo");
     let redoBtn = document.getElementById("redo");

@@ -5,10 +5,11 @@ const HIGHLIGHT_PADDING = 4;
 const HIGHLIGHT_COLOR = 0x3399ff;
 
 class SelectionManager {
+    #selected = [];
+
     constructor() {
-        this.selected = [];
         this.highlight = null;
-        this.onSelectionChanged = new Event();
+        this.onSelectionChanged = new Event(); // Observer: 선택이 바뀌면 알림
     }
 
     init(overlayLayer) {
@@ -16,10 +17,19 @@ class SelectionManager {
         overlayLayer.addChild(this.highlight);
     }
 
+
+    getSelected() {
+        return [...this.#selected];
+    }
+
+    hasSelection() {
+        return this.#selected.length > 0;
+    }
+
     select(shapes) {
-        this.selected = shapes;
+        this.#selected = [...shapes];
         this.refresh();
-        this.onSelectionChanged.invoke(this.selected);
+        this.onSelectionChanged.invoke(this.getSelected());
     }
 
     clear() {
@@ -28,7 +38,7 @@ class SelectionManager {
 
     refresh() {
         this.highlight.clear();
-        for (const shape of this.selected) {
+        for (const shape of this.#selected) {
             const b = shape.getBounds();
             this.highlight
                 .rect(
