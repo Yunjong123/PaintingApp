@@ -1,11 +1,11 @@
 import ShapeState from "./ShapeState.js";
 
+const STAR_POINTS = 5;
+
 export default class StarState extends ShapeState {
-    drawShape(g, start, end, style) {
+    drawShape(g, start, end) {
         const radius = Math.hypot(end.x - start.x, end.y - start.y);
 
-        g.star(start.x, start.y, 5, radius)
-            .fill(style.fill)
-            .stroke({ width: style.strokeWidth, color: style.stroke });
+        g.star(start.x, start.y, STAR_POINTS, radius);
     }
 }
