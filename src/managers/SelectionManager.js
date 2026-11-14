@@ -36,6 +36,10 @@ class SelectionManager {
         this.select([]);
     }
 
+    removeDetached(layer) {
+        this.select(this.#selected.filter((shape) => shape.parent === layer));
+    }
+
     refresh() {
         this.highlight.clear();
         for (const shape of this.#selected) {
